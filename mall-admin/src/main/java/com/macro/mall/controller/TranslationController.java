@@ -50,15 +50,15 @@ public class TranslationController {
     }
 
     @PostMapping("/auto")
-    @Operation(summary = "Translate Chinese content to English and Portuguese")
+    @Operation(summary = "Translate Chinese content to English, Portuguese and Spanish")
     public CommonResult<Map<String, String>> auto(@org.springframework.web.bind.annotation.RequestBody AutoTranslationParam param) {
         if (param == null || param.getText() == null || param.getText().isBlank()) {
             return CommonResult.validateFailed("请输入中文内容");
         }
         try {
             if (param.getText().length() > 1500) return CommonResult.validateFailed("自动翻译单次最多1500字符，请分段填写");
-            var targets = param.getTargetLangs() == null ? java.util.List.of("en", "pt") : param.getTargetLangs();
-            if (targets.isEmpty() || targets.stream().anyMatch(t -> !java.util.List.of("en", "pt").contains(t))) return CommonResult.validateFailed("目标语言仅支持英文和葡萄牙语");
+            var targets = param.getTargetLangs() == null ? java.util.List.of("en", "pt", "es") : param.getTargetLangs();
+            if (targets.isEmpty() || targets.stream().anyMatch(t -> !java.util.List.of("en", "pt", "es").contains(t))) return CommonResult.validateFailed("目标语言仅支持英文、葡萄牙语和西班牙语");
             String cacheKey = provider + targets + param.getText();
             Map<String, String> cached = cache.get(cacheKey);
             if (cached != null) return CommonResult.success(cached);
@@ -77,7 +77,7 @@ public class TranslationController {
 
     private String translateDeepL(String text, String target) throws IOException {
         if (deeplKey.isBlank()) throw new IOException("DeepL API Key 未配置");
-        ObjectNode body = mapper.createObjectNode().put("source_lang", "ZH").put("target_lang", "pt".equals(target) ? "PT-BR" : "EN");
+        ObjectNode body = mapper.createObjectNode().put("source_lang", "ZH").put("target_lang", "pt".equals(target) ? "PT-BR" : "es".equals(target) ? "ES" : "EN");
         body.putArray("text").add(text);
         Request request = new Request.Builder().url(deeplUrl.replaceAll("/$", "") + "/v2/translate")
                 .header("Authorization", "DeepL-Auth-Key " + deeplKey.trim())

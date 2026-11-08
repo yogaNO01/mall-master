@@ -10,4 +10,5 @@ public class CmsStorefrontText {
     private String zh;
     private String en;
     private String pt;
+    private String es;
 }
