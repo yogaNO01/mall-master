@@ -6,7 +6,7 @@ DROP PROCEDURE IF EXISTS add_content_translation_column$$
 CREATE PROCEDURE add_content_translation_column(IN target_table VARCHAR(64))
 BEGIN
  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name=target_table AND column_name='translations') THEN
-  SET @content_translation_ddl = CONCAT('ALTER TABLE `', target_table, '` ADD COLUMN translations JSON NULL COMMENT ''中/葡内容翻译''');
+  SET @content_translation_ddl = CONCAT('ALTER TABLE `', target_table, '` ADD COLUMN translations JSON NULL COMMENT ''中/英/葡内容翻译''');
   PREPARE content_translation_stmt FROM @content_translation_ddl;
   EXECUTE content_translation_stmt;
   DEALLOCATE PREPARE content_translation_stmt;
@@ -27,7 +27,8 @@ CALL add_content_translation_column('sms_flash_promotion');
 CALL add_content_translation_column('oms_order_return_reason');
 DROP PROCEDURE add_content_translation_column;
 
-CREATE TABLE IF NOT EXISTS cms_storefront_text (code CHAR(64) CHARACTER SET ascii NOT NULL PRIMARY KEY, source TEXT NOT NULL, zh LONGTEXT NOT NULL, pt LONGTEXT NULL, updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS cms_storefront_text (code CHAR(64) CHARACTER SET ascii NOT NULL PRIMARY KEY, source TEXT NOT NULL, zh LONGTEXT NOT NULL, en LONGTEXT NULL, pt LONGTEXT NULL, updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE cms_storefront_text ADD COLUMN IF NOT EXISTS en LONGTEXT NULL AFTER zh;
 INSERT INTO cms_storefront_text(code,source,zh,pt) VALUES(SHA2('首页',256),'首页','首页','Início') ON DUPLICATE KEY UPDATE code=VALUES(code);
 INSERT INTO cms_storefront_text(code,source,zh,pt) VALUES(SHA2('全部商品',256),'全部商品','全部商品','Todos os produtos') ON DUPLICATE KEY UPDATE code=VALUES(code);
 INSERT INTO cms_storefront_text(code,source,zh,pt) VALUES(SHA2('关于我们',256),'关于我们','关于我们','Sobre nós') ON DUPLICATE KEY UPDATE code=VALUES(code);

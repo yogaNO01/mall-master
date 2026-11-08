@@ -7,7 +7,7 @@
         WHERE delete_status = 0 AND publish_status = 1
         <if test="brandId != null">AND brand_id = #{brandId}</if>
         <if test="categoryId != null">AND product_category_id = #{categoryId}</if>
-        <if test="productName != null">AND (name LIKE #{productName} ESCAPE '=' OR JSON_UNQUOTE(JSON_EXTRACT(translations, '$.pt.name')) COLLATE utf8mb4_unicode_ci LIKE #{productName} ESCAPE '=')</if>
+        <if test="productName != null">AND (name LIKE #{productName} ESCAPE '=' OR JSON_UNQUOTE(JSON_EXTRACT(translations, '$.en.name')) COLLATE utf8mb4_unicode_ci LIKE #{productName} ESCAPE '=' OR JSON_UNQUOTE(JSON_EXTRACT(translations, '$.pt.name')) COLLATE utf8mb4_unicode_ci LIKE #{productName} ESCAPE '=')</if>
         <if test="productSn != null">AND product_sn LIKE #{productSn} ESCAPE '='</if>
         <foreach collection="tokens" item="token">
             AND (
@@ -18,8 +18,11 @@
                 OR brand_name LIKE #{token} ESCAPE '='
                 OR product_category_name LIKE #{token} ESCAPE '='
                 OR JSON_UNQUOTE(JSON_EXTRACT(translations, '$.pt.name')) COLLATE utf8mb4_unicode_ci LIKE #{token} ESCAPE '='
+                OR JSON_UNQUOTE(JSON_EXTRACT(translations, '$.en.name')) COLLATE utf8mb4_unicode_ci LIKE #{token} ESCAPE '='
                 OR JSON_UNQUOTE(JSON_EXTRACT(translations, '$.pt.subTitle')) COLLATE utf8mb4_unicode_ci LIKE #{token} ESCAPE '='
+                OR JSON_UNQUOTE(JSON_EXTRACT(translations, '$.en.subTitle')) COLLATE utf8mb4_unicode_ci LIKE #{token} ESCAPE '='
                 OR JSON_UNQUOTE(JSON_EXTRACT(translations, '$.pt.keywords')) COLLATE utf8mb4_unicode_ci LIKE #{token} ESCAPE '='
+                OR JSON_UNQUOTE(JSON_EXTRACT(translations, '$.en.keywords')) COLLATE utf8mb4_unicode_ci LIKE #{token} ESCAPE '='
                 OR EXISTS (SELECT 1 FROM pms_brand translated_brand WHERE translated_brand.id = pms_product.brand_id AND JSON_UNQUOTE(JSON_EXTRACT(translated_brand.translations, '$.pt.name')) COLLATE utf8mb4_unicode_ci LIKE #{token} ESCAPE '=')
                 OR EXISTS (SELECT 1 FROM pms_product_category translated_category WHERE translated_category.id = pms_product.product_category_id AND JSON_UNQUOTE(JSON_EXTRACT(translated_category.translations, '$.pt.name')) COLLATE utf8mb4_unicode_ci LIKE #{token} ESCAPE '=')
             )

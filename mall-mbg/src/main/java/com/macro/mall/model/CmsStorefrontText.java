@@ -8,5 +8,6 @@ public class CmsStorefrontText {
     private String code;
     private String source;
     private String zh;
+    private String en;
     private String pt;
 }

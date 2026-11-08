@@ -24,7 +24,8 @@ public class CmsStorefrontTextController {
     @Operation(summary = "修改商城中文及葡萄牙语文案")
     public CommonResult<Integer> update(@PathVariable String code, @RequestBody CmsStorefrontText content) {
         if (!code.matches("[a-fA-F0-9]{64}") || content.getZh() == null || content.getZh().isBlank()
-                || content.getZh().length() > 20000 || (content.getPt() != null && content.getPt().length() > 20000)) {
+                || content.getZh().length() > 20000 || (content.getEn() != null && content.getEn().length() > 20000)
+                || (content.getPt() != null && content.getPt().length() > 20000)) {
             return CommonResult.validateFailed("请填写有效中文内容；每种语言最多20000字");
         }
         content.setCode(code);

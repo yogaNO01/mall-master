@@ -173,10 +173,6 @@ public class PmsProductServiceImpl implements PmsProductService {
     private void validateLocalizedPrices(PmsProductParam productParam) {
         validateAmount(productParam.getPrice(), "人民币商品售价");
         validateAmount(productParam.getOriginalPrice(), "人民币市场价");
-        Map<String, Map<String, String>> translations = productParam.getTranslations();
-        Map<String, String> portuguese = translations == null ? null : translations.get("pt");
-        validateAmount(portuguese == null ? null : portuguese.get("price"), "巴西雷亚尔商品售价");
-        validateAmount(portuguese == null ? null : portuguese.get("originalPrice"), "巴西雷亚尔市场价");
     }
 
     private void validateAmount(BigDecimal amount, String label) {

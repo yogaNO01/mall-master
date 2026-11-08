@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS system_freight (id INT PRIMARY KEY, cn DECIMAL(10,2) NOT NULL, usd DECIMAL(10,2) NOT NULL, eur DECIMAL(10,2) NOT NULL, international_cny DECIMAL(10,2) NOT NULL);
+INSERT IGNORE INTO system_freight VALUES (1,10,3.00,2.68,20);
+INSERT INTO ums_menu(parent_id,create_time,title,level,sort,name,icon,hidden) SELECT id,NOW(),'运费设置',1,0,'freight','product-list',0 FROM (SELECT id FROM ums_menu WHERE name='pms' LIMIT 1) p WHERE NOT EXISTS(SELECT 1 FROM ums_menu WHERE name='freight');
+INSERT INTO ums_role_menu_relation(role_id,menu_id) SELECT DISTINCT r.role_id,m.id FROM ums_role_menu_relation r JOIN ums_menu p ON p.id=r.menu_id AND p.name='product' CROSS JOIN ums_menu m WHERE m.name='freight' AND NOT EXISTS(SELECT 1 FROM ums_role_menu_relation x WHERE x.role_id=r.role_id AND x.menu_id=m.id);
+INSERT INTO ums_resource(create_time,name,url,category_id) SELECT NOW(),'运费设置','/system/freight',1 WHERE NOT EXISTS(SELECT 1 FROM ums_resource WHERE url='/system/freight');
+INSERT INTO ums_role_resource_relation(role_id,resource_id) SELECT DISTINCT r.role_id,n.id FROM ums_role_resource_relation r JOIN ums_resource old ON old.id=r.resource_id AND old.url='/product/**' CROSS JOIN ums_resource n WHERE n.url='/system/freight' AND NOT EXISTS(SELECT 1 FROM ums_role_resource_relation x WHERE x.role_id=r.role_id AND x.resource_id=n.id);

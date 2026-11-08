@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 @Service
 public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
     @Autowired
+    private com.macro.mall.mapper.SystemFreightMapper systemFreightMapper;
+    @Autowired
     private UmsMemberService memberService;
     @Autowired
     private OmsCartItemService cartItemService;
@@ -167,7 +169,9 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         OmsOrder order = new OmsOrder();
         order.setDiscountAmount(new BigDecimal(0));
         order.setTotalAmount(calcTotalAmount(orderItemList));
-        order.setFreightAmount(new BigDecimal(0));
+        order.setFreightAmount(orderItemList.stream()
+                .map(item -> BigDecimal.valueOf(item.getProductQuantity()).multiply(systemFreightMapper.read().get("cn")))
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
         order.setPromotionAmount(calcPromotionAmount(orderItemList));
         order.setPromotionInfo(getOrderPromotionInfo(orderItemList));
         if (orderParam.getCouponId() == null) {
@@ -759,7 +763,9 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
      */
     private ConfirmOrderResult.CalcAmount calcCartAmount(List<CartPromotionItem> cartPromotionItemList) {
         ConfirmOrderResult.CalcAmount calcAmount = new ConfirmOrderResult.CalcAmount();
-        calcAmount.setFreightAmount(new BigDecimal(0));
+        calcAmount.setFreightAmount(cartPromotionItemList.stream()
+                .map(item -> BigDecimal.valueOf(item.getQuantity()).multiply(systemFreightMapper.read().get("cn")))
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
         BigDecimal totalAmount = new BigDecimal("0");
         BigDecimal promotionAmount = new BigDecimal("0");
         for (CartPromotionItem cartPromotionItem : cartPromotionItemList) {
@@ -768,7 +774,7 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         }
         calcAmount.setTotalAmount(totalAmount);
         calcAmount.setPromotionAmount(promotionAmount);
-        calcAmount.setPayAmount(totalAmount.subtract(promotionAmount));
+        calcAmount.setPayAmount(totalAmount.subtract(promotionAmount).add(calcAmount.getFreightAmount()));
         return calcAmount;
     }
 

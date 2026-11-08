@@ -35,3 +35,9 @@ logging:
 
 logstash:
   host: logstash
+
+translation:
+  provider: deepl
+  deepl:
+    api-key: c0a67b4d-fa09-4827-8211-9ca172a97432:fx
+    base-url: https://api-free.deepl.com
