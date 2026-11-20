@@ -46,7 +46,7 @@ public class SecurityConfig {
             //允许跨域请求的OPTIONS请求
             registry.requestMatchers(HttpMethod.OPTIONS).permitAll();
             registry.requestMatchers(HttpMethod.GET, "/home/exchange-rates").permitAll();
-            registry.requestMatchers(HttpMethod.POST, "/translation/auto").authenticated();
+            registry.requestMatchers(HttpMethod.POST, "/translation/auto", "/media/upload").authenticated();
             //任何请求需要身份认证
         })
         //任何请求需要身份认证

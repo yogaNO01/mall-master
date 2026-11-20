@@ -6,7 +6,8 @@ spring:
   servlet:
     multipart:
       enabled: true #开启文件上传
-      max-file-size: 10MB #限制文件上传大小为10M
+      max-file-size: 2MB
+      max-request-size: 3MB # 为上传请求的表单字段和边界留出空间
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -75,7 +76,7 @@ aliyun:
     bucketName: macro-oss # oss的存储空间
     policy:
       expire: 300 # 签名有效期(S)
-    maxSize: 10 # 上传文件大小(M)
+    maxSize: 2 # 上传文件大小(M)
     callback: http://localhost:8080/aliyun/oss/callback # 文件上传成功后的回调地址
     dir:
       prefix: mall/images/ # 上传文件夹路径前缀
