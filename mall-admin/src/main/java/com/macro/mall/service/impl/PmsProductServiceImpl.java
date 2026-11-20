@@ -19,11 +19,14 @@ import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -100,20 +103,22 @@ public class PmsProductServiceImpl implements PmsProductService {
 
     private void handleSkuStockCode(List<PmsSkuStock> skuStockList, Long productId) {
         if(CollectionUtils.isEmpty(skuStockList))return;
-        for(int i=0;i<skuStockList.size();i++){
-            PmsSkuStock skuStock = skuStockList.get(i);
-            if(StrUtil.isEmpty(skuStock.getSkuCode())){
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-                StringBuilder sb = new StringBuilder();
-                //日期
-                sb.append(sdf.format(new Date()));
-                //四位商品id
-                sb.append(String.format("%04d", productId));
-                //三位索引id
-                sb.append(String.format("%03d", i+1));
-                skuStock.setSkuCode(sb.toString());
+        Set<String> assigned = new HashSet<>();
+        for (PmsSkuStock sku : skuStockList) {
+            String code = sku.getSkuCode() == null ? "" : sku.getSkuCode().trim();
+            while (code.isEmpty() || assigned.contains(code.toLowerCase(Locale.ROOT)) || skuCodeExists(code, sku.getId())) {
+                code = "SKU-" + productId + "-" + UUID.randomUUID().toString().replace("-", "");
             }
+            assigned.add(code.toLowerCase(Locale.ROOT));
+            sku.setSkuCode(code);
         }
+    }
+
+    private boolean skuCodeExists(String code, Long skuId) {
+        PmsSkuStockExample example = new PmsSkuStockExample();
+        PmsSkuStockExample.Criteria criteria = example.createCriteria().andSkuCodeEqualTo(code);
+        if (skuId != null) criteria.andIdNotEqualTo(skuId);
+        return skuStockMapper.countByExample(example) > 0;
     }
 
     @Override
@@ -212,8 +217,7 @@ public class PmsProductServiceImpl implements PmsProductService {
         List<Long> updateSkuIds = updateSkuList.stream().map(PmsSkuStock::getId).collect(Collectors.toList());
         //获取需要删除的sku信息
         List<PmsSkuStock> removeSkuList = oriStuList.stream().filter(item-> !updateSkuIds.contains(item.getId())).collect(Collectors.toList());
-        handleSkuStockCode(insertSkuList,id);
-        handleSkuStockCode(updateSkuList,id);
+        handleSkuStockCode(currSkuList, id);
         //新增sku
         if(CollUtil.isNotEmpty(insertSkuList)){
             relateAndInsertList(skuStockDao, insertSkuList, id);
