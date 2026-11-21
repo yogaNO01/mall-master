@@ -85,7 +85,13 @@ public class PmsBrandServiceImpl implements PmsBrandService {
         if(showStatus!=null){
             criteria.andShowStatusEqualTo(showStatus);
         }
-        return brandMapper.selectByExample(pmsBrandExample);
+        List<PmsBrand> brands = brandMapper.selectByExample(pmsBrandExample);
+        for (PmsBrand brand : brands) {
+            PmsProductExample products = new PmsProductExample();
+            products.createCriteria().andBrandIdEqualTo(brand.getId()).andDeleteStatusEqualTo(0);
+            brand.setProductCount(Math.toIntExact(productMapper.countByExample(products)));
+        }
+        return brands;
     }
 
     @Override
