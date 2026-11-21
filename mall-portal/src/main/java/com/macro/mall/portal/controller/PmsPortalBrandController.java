@@ -34,6 +34,14 @@ public class PmsPortalBrandController {
         return CommonResult.success(brandList);
     }
 
+    @Operation(summary = "分页获取可见品牌及其在售商品数")
+    @GetMapping("/list")
+    @ResponseBody
+    public CommonResult<List<PmsBrand>> visibleList(@RequestParam(defaultValue = "12") int pageSize,
+                                                    @RequestParam(defaultValue = "1") int pageNum) {
+        return CommonResult.success(portalBrandService.visibleList(pageNum, pageSize));
+    }
+
     @Operation(summary = "获取品牌详情")
     @RequestMapping(value = "/detail/{brandId}", method = RequestMethod.GET)
     @ResponseBody

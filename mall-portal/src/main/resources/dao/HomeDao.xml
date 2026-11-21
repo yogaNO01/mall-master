@@ -21,6 +21,17 @@
         LIMIT #{offset}, #{limit}
     </select>
 
+    <select id="getVisibleBrandList" resultMap="com.macro.mall.mapper.PmsBrandMapper.BaseResultMap">
+        SELECT b.id, b.name, b.first_letter, b.sort, b.factory_status, b.show_status,
+               b.product_comment_count, b.logo, b.big_pic, b.brand_story,
+               (SELECT COUNT(*) FROM pms_product p
+                WHERE p.brand_id = b.id AND p.delete_status = 0 AND p.publish_status = 1) AS product_count
+        FROM pms_brand b
+        WHERE b.show_status = 1
+        ORDER BY b.sort DESC, b.id ASC
+        LIMIT #{offset}, #{limit}
+    </select>
+
     <select id="getFlashProductList" resultMap="flashPromotionProduct">
         SELECT
             pr.flash_promotion_price,

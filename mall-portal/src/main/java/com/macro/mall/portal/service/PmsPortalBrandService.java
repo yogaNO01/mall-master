@@ -16,6 +16,8 @@ public interface PmsPortalBrandService {
      */
     List<PmsBrand> recommendList(Integer pageNum, Integer pageSize);
 
+    List<PmsBrand> visibleList(int pageNum, int pageSize);
+
     /**
      * 获取品牌详情
      */

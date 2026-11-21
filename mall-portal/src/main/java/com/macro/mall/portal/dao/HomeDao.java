@@ -19,6 +19,8 @@ public interface HomeDao {
      */
     List<PmsBrand> getRecommendBrandList(@Param("offset") Integer offset,@Param("limit") Integer limit);
 
+    List<PmsBrand> getVisibleBrandList(@Param("offset") long offset, @Param("limit") int limit);
+
     /**
      * 获取秒杀商品
      */

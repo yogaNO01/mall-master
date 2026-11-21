@@ -34,6 +34,13 @@ public class PmsPortalBrandServiceImpl implements PmsPortalBrandService {
     }
 
     @Override
+    public List<PmsBrand> visibleList(int pageNum, int pageSize) {
+        int limit = Math.min(100, Math.max(1, pageSize));
+        long offset = (Math.max(1L, pageNum) - 1) * limit;
+        return homeDao.getVisibleBrandList(offset, limit);
+    }
+
+    @Override
     public PmsBrand detail(Long brandId) {
         return brandMapper.selectByPrimaryKey(brandId);
     }
