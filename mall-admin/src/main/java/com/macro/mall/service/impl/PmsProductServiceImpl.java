@@ -176,6 +176,9 @@ public class PmsProductServiceImpl implements PmsProductService {
      * actual selling price in each market.
      */
     private void validateLocalizedPrices(PmsProductParam productParam) {
+        if (StrUtil.isBlank(productParam.getProductSn())) {
+            Asserts.fail("商品货号不能为空");
+        }
         validateAmount(productParam.getPrice(), "人民币商品售价");
         validateAmount(productParam.getOriginalPrice(), "人民币市场价");
     }
