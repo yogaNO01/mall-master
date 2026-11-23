@@ -73,6 +73,7 @@ public class PmsProductServiceImpl implements PmsProductService {
 
     @Override
     public int create(PmsProductParam productParam) {
+        validateProductGallery(productParam);
         validateLocalizedPrices(productParam);
         int count;
         //创建商品
@@ -128,6 +129,7 @@ public class PmsProductServiceImpl implements PmsProductService {
 
     @Override
     public int update(Long id, PmsProductParam productParam) {
+        validateProductGallery(productParam);
         validateLocalizedPrices(productParam);
         int count;
         //更新商品信息
@@ -181,6 +183,21 @@ public class PmsProductServiceImpl implements PmsProductService {
         }
         validateAmount(productParam.getPrice(), "人民币商品售价");
         validateAmount(productParam.getOriginalPrice(), "人民币市场价");
+    }
+
+    private void validateProductGallery(PmsProductParam productParam) {
+        int count = StrUtil.isBlank(productParam.getPic()) ? 0 : 1;
+        String album = productParam.getAlbumPics();
+        if (album != null) {
+            for (String url : album.split(",")) {
+                if (StrUtil.isNotBlank(url)) {
+                    count++;
+                }
+            }
+        }
+        if (count > 10) {
+            Asserts.fail("商品相册最多上传10张图片（含封面）");
+        }
     }
 
     private void validateAmount(BigDecimal amount, String label) {
