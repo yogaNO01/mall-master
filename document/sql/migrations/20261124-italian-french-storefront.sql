@@ -1,0 +1,3 @@
+ALTER TABLE cms_storefront_text
+    ADD COLUMN it LONGTEXT NULL,
+    ADD COLUMN fr LONGTEXT NULL;

@@ -7,5 +7,5 @@ import java.util.List;
 public class AutoTranslationParam {
     private String text;
     private String sourceLang = "zh";
-    private List<String> targetLangs = List.of("en", "pt", "es");
+    private List<String> targetLangs = List.of("en", "pt", "es", "it", "fr");
 }

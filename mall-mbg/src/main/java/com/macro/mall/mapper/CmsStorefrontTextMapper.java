@@ -6,9 +6,9 @@ import org.apache.ibatis.annotations.Update;
 import java.util.List;
 
 public interface CmsStorefrontTextMapper {
-    @Select("SELECT code, source, zh, en, pt, es FROM cms_storefront_text ORDER BY source")
+    @Select("SELECT code, source, zh, en, pt, es, it, fr FROM cms_storefront_text ORDER BY source")
     List<CmsStorefrontText> listAll();
 
-    @Update("UPDATE cms_storefront_text SET zh=#{zh}, en=#{en}, pt=#{pt}, es=#{es} WHERE code=#{code}")
+    @Update("UPDATE cms_storefront_text SET zh=#{zh}, en=#{en}, pt=#{pt}, es=#{es}, it=#{it}, fr=#{fr} WHERE code=#{code}")
     int update(CmsStorefrontText content);
 }

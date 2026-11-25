@@ -26,7 +26,9 @@ public class CmsStorefrontTextController {
         if (!code.matches("[a-fA-F0-9]{64}") || content.getZh() == null || content.getZh().isBlank()
                 || content.getZh().length() > 20000 || (content.getEn() != null && content.getEn().length() > 20000)
                 || (content.getPt() != null && content.getPt().length() > 20000)
-                || (content.getEs() != null && content.getEs().length() > 20000)) {
+                || (content.getEs() != null && content.getEs().length() > 20000)
+                || (content.getIt() != null && content.getIt().length() > 20000)
+                || (content.getFr() != null && content.getFr().length() > 20000)) {
             return CommonResult.validateFailed("请填写有效中文内容；每种语言最多20000字");
         }
         content.setCode(code);
