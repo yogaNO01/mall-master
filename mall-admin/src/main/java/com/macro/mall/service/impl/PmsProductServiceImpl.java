@@ -186,6 +186,7 @@ public class PmsProductServiceImpl implements PmsProductService {
     }
 
     private void validateProductGallery(PmsProductParam productParam) {
+        validateColorAlbums(productParam);
         int count = StrUtil.isBlank(productParam.getPic()) ? 0 : 1;
         String album = productParam.getAlbumPics();
         if (album != null) {
@@ -197,6 +198,26 @@ public class PmsProductServiceImpl implements PmsProductService {
         }
         if (count > 10) {
             Asserts.fail("商品相册最多上传10张图片（含封面）");
+        }
+    }
+
+    private void validateColorAlbums(PmsProductParam productParam) {
+        if (productParam.getProductAttributeValueList() == null) return;
+        for (var attribute : productParam.getProductAttributeValueList()) {
+            if (attribute == null || attribute.getTranslations() == null) continue;
+            var chinese = attribute.getTranslations().get("zh");
+            if (chinese == null || StrUtil.isBlank(chinese.get("colorAlbums"))) continue;
+            try {
+                var groups = new com.fasterxml.jackson.databind.ObjectMapper().readTree(chinese.get("colorAlbums"));
+                if (!groups.isObject()) Asserts.fail("颜色相册格式无效");
+                for (var group : groups) {
+                    var images = group.path("images");
+                    if (!images.isArray()) Asserts.fail("颜色相册格式无效");
+                    if (images.size() > 10) Asserts.fail("每个颜色组最多上传10张商品图片");
+                }
+            } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+                Asserts.fail("颜色相册格式无效");
+            }
         }
     }
 
